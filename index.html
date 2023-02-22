@@ -56,7 +56,7 @@ class Point {
 		var dy = this.y - that.y;
 		var atan = Math.atan2(dy, dx);
 		if(atan < 0) atan += 2 * Math.PI;
-		console.log(atan);
+		return atan;
 	}
 	paint(canvas) {
 		canvas.getContext("2d").beginPath();

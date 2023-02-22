@@ -10,7 +10,6 @@ class Painter {
 	static clear(canvas) {
 		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 	}
-
 	static box(canvas, x, y, w, h, color) {
 		canvas.getContext("2d").fillStyle = color;
 		canvas.getContext("2d").fillRect(x, y, w, h);
@@ -166,7 +165,7 @@ var canvas = document.getElementById("test");
 canvas.width = body.clientWidth;
 canvas.height = body.clientWidth / 3;
 
-var player1 = new Fighter(100, 100);
+var player1 = new Fighter(500, 250);
 
 var origin = new Point(0, 0);
 var cursor = origin.copy();
@@ -180,7 +179,11 @@ document.onmousemove = function(e) {
 };
 function onTimerTick() {
 
-	chaser.follow(cursor);
+	// Update
+
+	//chaser.follow(cursor);
+
+	// Draw
 
 	Painter.fill(canvas, "white");
 
@@ -188,8 +191,6 @@ function onTimerTick() {
 
 	cursor.paint(canvas);
 	chaser.paint(canvas);
-
-	cursor.angleFrom(chaser);
 
 }
 setInterval(onTimerTick, 33); // 33 milliseconds = ~ 30 frames per sec

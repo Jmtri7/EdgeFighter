@@ -1,0 +1,112 @@
+<html>
+<canvas id="test">
+<script>
+
+class Painter {
+	static fill(canvas, color) {
+		Painter.box(canvas, 0, 0, canvas.width, canvas.height, color);
+	}
+	static clear(canvas) {
+		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+	}
+	static edge(canvas, x1, y1, x2, y2) {
+		canvas.getContext("2d").beginPath();
+		canvas.getContext("2d").moveTo(x1, y1);
+		canvas.getContext("2d").lineTo(x2, y2);
+		canvas.getContext("2d").stroke();
+	}
+
+	static box(canvas, x, y, w, h, color) {
+		canvas.getContext("2d").fillStyle = color;
+		canvas.getContext("2d").fillRect(x, y, w, h);
+	}
+	static circle(canvas, x, y, r, color) {
+		canvas.getContext("2d").beginPath();
+		canvas.getContext("2d").arc(x, y, r, 0, 2 * Math.PI);
+		canvas.getContext("2d").fillStyle = color;
+		canvas.getContext("2d").fill();
+	}
+}
+
+class Point {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+}
+
+class Circle extends Point {
+	constructor(x, y, r, color) {
+		super(x, y);
+		this.r = r;
+		this.color = color;
+	}
+	paint(ctx) {
+		Painter.circle(ctx, this.x, this.y, this.r, this.color);
+	}
+}
+
+class Edge {
+	constructor(p1, p2) {
+		this.p1 = p1;
+		this.p2 = p2;
+	}
+	intersect(that) {
+		return this.p1.x <= that.p2.x
+        	&& this.p2.x >= that.p1.x
+        	&& this.p1.y <= that.p2.y
+        	&& this.p2.y >= that.p1.y;
+	}
+	paint(canvas) {
+		Painter.edge(canvas, this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+	}
+}
+
+class SwordFight {
+	constructor() {
+
+	}
+}
+
+class FighterEdge extends Edge {
+	constructor(p1, p2) {
+
+	}
+}
+
+class Fighter {
+	constructor() {
+		this.body = [];
+		this.weapon = [];
+	}
+	paint(canvas) {
+		for(var i = 0; i < this.body.length; i++) {
+			Painter.edge(canvas, this.body[i].p1.x, this.body[i].p1.y, this.body[i].p2.x, this.body[i].p2.y);
+		}
+	}
+}
+
+document.body.style.backgroundColor = "black";
+document.body.style.margin = "0px 0px 0px 0px";
+
+var canvas = document.getElementById("test");
+canvas.width = 500;
+canvas.height = 500;
+
+var p1 = new Point(30, 30);
+var p2 = new Point(70, 30);
+
+var player1 = new Fighter();
+player1.body.push(new Edge(p1, p2));
+
+function onTimerTick() {
+
+	Painter.fill(canvas, "white");
+
+	player1.paint(canvas);
+
+}
+setInterval(onTimerTick, 33); // 33 milliseconds = ~ 30 frames per sec
+
+</script>
+</html>

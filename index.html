@@ -146,9 +146,8 @@ body.style.backgroundColor = "black";
 body.style.margin = "0px 0px 0px 0px";
 
 var canvas = document.getElementById("test");
-
 canvas.width = body.clientWidth;
-canvas.height = body.clientHeight;
+canvas.height = body.clientWidth / 3;
 
 var player1 = new Fighter(100, 100);
 var cursor = new Point(0, 0);
@@ -158,10 +157,6 @@ document.onmousemove = function(e) {
     cursor.y = e.pageY;
     if (cursor.x < 0) cursor.x = 0;
     if (cursor.y < 0) cursor.y = 0;
-};
-window.onresize = function(e) {
-	document.getElementById("test").width = document.body.clientWidth;
-    document.getElementById("test").height = document.body.clientHeight;
 };
 function onTimerTick() {
 

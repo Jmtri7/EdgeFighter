@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <canvas id="test">
 <script>
@@ -8,12 +9,6 @@ class Painter {
 	}
 	static clear(canvas) {
 		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-	}
-	static edge(canvas, x1, y1, x2, y2) {
-		canvas.getContext("2d").beginPath();
-		canvas.getContext("2d").moveTo(x1, y1);
-		canvas.getContext("2d").lineTo(x2, y2);
-		canvas.getContext("2d").stroke();
 	}
 
 	static box(canvas, x, y, w, h, color) {
@@ -33,16 +28,31 @@ class Point {
 		this.x = x;
 		this.y = y;
 	}
-}
-
-class Circle extends Point {
-	constructor(x, y, r, color) {
-		super(x, y);
-		this.r = r;
-		this.color = color;
+	copy() {
+		return new Point(this.x, this.y);
 	}
-	paint(ctx) {
-		Painter.circle(ctx, this.x, this.y, this.r, this.color);
+	translate(dx, dy) {
+		if(dy == undefined) {
+			console.log("Error: dy undefined in point translate!");
+			dy = 0;
+		}
+		this.x += dx;
+		this.y += dy;
+		return this;
+	}
+	rotate(center, angle) {
+		let dx = this.x - center.x;
+		let dy = this.y - center.y;
+		let r = Math.sqrt(dx * dx + dy * dy);
+		this.x = center.x + r * Math.cos(angle / 180 * Math.PI);
+		this.y = center.y + r * Math.sin(angle / 180 * Math.PI);
+		return this;
+	}
+	paint(canvas) {
+		canvas.getContext("2d").beginPath();
+		canvas.getContext("2d").arc(this.x, this.y, 2, 0, 2 * Math.PI);
+		canvas.getContext("2d").fillStyle = "black";
+		canvas.getContext("2d").fill();
 	}
 }
 
@@ -58,60 +68,102 @@ class Edge {
         	&& this.p2.y >= that.p1.y;
 	}
 	paint(canvas) {
-		Painter.edge(canvas, this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+		canvas.getContext("2d").beginPath();
+		canvas.getContext("2d").moveTo(this.p1.x, this.p1.y);
+		canvas.getContext("2d").lineTo(this.p2.x, this.p2.y);
+		canvas.getContext("2d").stroke();
 	}
-}
-
-class SwordFight {
-	constructor() {
-
+	copy() {
+		return new Edge(this.p1, this.p2);
 	}
-}
-
-class FighterEdge extends Edge {
-	constructor(p1, p2) {
-
+	translate(dx, dy) {
+		this.p1.translate(dx, dy);
+		this.p2.translate(dx, dy);
+		return this;
+	}
+	rotate(center, angle) {
+		this.p1.rotate(center, angle);
+		this.p2.rotate(center, angle);
+		return this;
 	}
 }
 
 class Fighter {
-	constructor() {
-		this.body = [];
-		this.weapon = [];
+	constructor(x, y) {
+
+		var anchor = new Point(x, y);
+
+		var upperArmBend = 30;
+		var lowerArmBend = -30;
+
+		var upperArmLength = 50;
+		var lowerArmLength = 50;
+
+		var armWidth = 10;
+
+		var edge1 = new Edge(
+			anchor.copy(), 
+			anchor.copy().translate(upperArmLength, 0),
+		);
+		var edge2 = new Edge(
+			edge1.p2.copy(), 
+			edge1.p2.copy().translate(lowerArmLength, 0),
+		);
+
+		edge1.rotate(edge1.p1, upperArmBend);
+		edge2.rotate(edge1.p1, upperArmBend);
+		edge2.rotate(edge1.p2, lowerArmBend);
+
+		this.vertices = [
+			edge1.p1,
+			edge1.p2,
+			edge2.p1,
+			edge2.p2,
+		];
+		this.edges = [
+
+		];
+		this.body = [
+			edge1,
+			edge2,
+		];
+		this.weapon = [
+
+		];
 	}
 	paint(canvas) {
-		console.log(canvas);
+		for(var i = 0; i < this.vertices.length; i++) {
+			this.vertices[i].paint(canvas);
+		}
 		for(var i = 0; i < this.body.length; i++) {
-			console.log(this.body[i]);
-			Painter.edge(canvas, this.body[i].p1.x, this.body[i].p1.y, this.body[i].p2.x, this.body[i].p2.y);
+			this.body[i].paint(canvas);
 		}
 	}
 }
-
-//
 
 document.body.style.backgroundColor = "black";
 document.body.style.margin = "0px 0px 0px 0px";
 
 var canvas = document.getElementById("test");
-canvas.width = 500;
+canvas.width = 700;
 canvas.height = 500;
 
-var player1 = new Fighter();
+var player1 = new Fighter(100, 100);
+var cursor = new Point(0, 0);
 
-var p1 = new Point(30, 30);
-var p2 = new Point(70, 30);
-var p3 = new Point(30, 50);
-var p4 = new Point(70, 50);
-
-player1.body.push(new Edge(p1, p2));
-player1.body.push(new Edge(p3, p4));
-
+document.onmousemove = function(e) {
+    cursor.x = e.pageX;
+    cursor.y = e.pageY;
+    if (cursor.x < 0) cursor.x = 0;
+    if (cursor.y < 0) cursor.y = 0;
+};
 function onTimerTick() {
 
 	Painter.fill(canvas, "white");
 
 	player1.paint(canvas);
+
+	cursor.paint(canvas);
 
 }
 setInterval(onTimerTick, 33); // 33 milliseconds = ~ 30 frames per sec

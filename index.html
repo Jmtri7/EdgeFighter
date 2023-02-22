@@ -111,34 +111,55 @@ class Fighter {
 
 		var chest = new Point(x, y);
 
-		var leftShoulder = chest.copy().translate(-2 * bodyUnit, 0);
-		var leftElbow = leftShoulder.copy().translate(-2 * bodyUnit, 0);
-		var leftHand = leftElbow.copy().translate(-2 * bodyUnit, 0);
+		this.leftShoulder = chest.copy().translate(-2 * bodyUnit, 0);
+		this.rightShoulder = chest.copy().translate(2 * bodyUnit, 0);
 
-		var rightShoulder = chest.copy().translate(2 * bodyUnit, 0);
-		var rightElbow = rightShoulder.copy().translate(2 * bodyUnit, 0);
-		var rightHand = rightElbow.copy().translate(2 * bodyUnit, 0);
+		this.shoulders = new Edge(this.leftShoulder, this.rightShoulder);
+
+		this.leftElbow = this.leftShoulder.copy().translate(-2 * bodyUnit, 0);
+		this.rightElbow = this.rightShoulder.copy().translate(2 * bodyUnit, 0);
+
+		this.leftUpperArm = new Edge(this.leftShoulder, this.leftElbow);
+		this.rightUpperArm = new Edge(this.rightShoulder, this.rightElbow);
+
+		this.leftHand = this.leftElbow.copy().translate(-2 * bodyUnit, 0);
+		this.rightHand = this.rightElbow.copy().translate(2 * bodyUnit, 0);
+
+		this.leftLowerArm = new Edge(this.leftElbow, this.leftHand);
+		this.rightLowerArm = new Edge(this.rightElbow, this.rightHand);
 
 		var crotch = chest.copy().translate(0, 5 * bodyUnit);
 
-		var leftHip = crotch.copy().translate(-bodyUnit, 0);
-		var leftKnee = leftHip.copy().translate(0, 3 * bodyUnit);
-		var leftFoot = leftKnee.copy().translate(0, 3 * bodyUnit);
+		this.leftHip = crotch.copy().translate(-bodyUnit, 0);
+		this.rightHip = crotch.copy().translate(bodyUnit, 0);
 
-		var rightHip = crotch.copy().translate(bodyUnit, 0);
-		var rightKnee = rightHip.copy().translate(0, 3 * bodyUnit);
-		var rightFoot = rightKnee.copy().translate(0, 3 * bodyUnit);
+		this.hips = new Edge(this.leftHip, this.rightHip);
+
+		this.leftKnee = this.leftHip.copy().translate(0, 3 * bodyUnit);
+		this.rightKnee = this.rightHip.copy().translate(0, 3 * bodyUnit);
+
+		this.leftUpperLeg = new Edge(this.leftHip, this.leftKnee);
+		this.rightUpperLeg = new Edge(this.rightHip, this.rightKnee);
+
+		this.leftFoot = this.leftKnee.copy().translate(0, 3 * bodyUnit);
+		this.rightFoot = this.rightKnee.copy().translate(0, 3 * bodyUnit);
+
+		this.leftLowerLeg = new Edge(this.leftKnee, this.leftFoot);
+		this.rightLowerLeg = new Edge(this.rightKnee, this.rightFoot);
 
 		this.vertices = [
-			chest,
-			leftShoulder, leftElbow, leftHand,
-			rightShoulder, rightElbow, rightHand,
-			crotch,
-			leftHip, leftKnee, leftFoot,
-			rightHip, rightKnee, rightFoot,
+			this.leftShoulder, this.leftElbow, this.leftHand,
+			this.rightShoulder, this.rightElbow, this.rightHand,
+			this.leftHip, this.leftKnee, this.leftFoot,
+			this.rightHip, this.rightKnee, this.rightFoot,
 		];
 		this.edges = [
-
+			this.shoulders,
+			this.leftUpperArm, this.leftLowerArm,
+			this.rightUpperArm, this.rightLowerArm,
+			this.hips,
+			this.leftUpperLeg, this.leftLowerLeg,
+			this.rightUpperLeg, this.rightLowerLeg,
 		];
 		this.body = [
 
